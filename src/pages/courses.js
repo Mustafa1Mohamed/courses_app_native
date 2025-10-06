@@ -5,6 +5,7 @@ import { Button } from "react-native-paper";
 import MyCard from "../components/MyCard";
 
 function Courses() {
+  
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

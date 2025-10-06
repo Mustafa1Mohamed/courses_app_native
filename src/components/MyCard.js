@@ -1,35 +1,39 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Card, Button, IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFav } from "../../Store/FavSlice.js";
 
 const MyCard = ({ course, showButton = true }) => {
   const navigation = useNavigation();
-  const [isFav, setIsFav] = useState(false);
+  const dispatch = useDispatch();
+
+  const exist = useSelector((state) =>
+    state.favReducer.fav.find((m) => m.id === course.id)
+  );
 
   const handlePress = () => {
     navigation.navigate("CoursesDetails", { course });
   };
 
   const toggleFavorite = () => {
-    setIsFav(!isFav);
+    dispatch(toggleFav(course));
   };
 
   return (
     <Card style={styles.card}>
-      
       <View style={styles.imageContainer}>
         <Card.Cover source={{ uri: course.course_image }} style={styles.image} />
         <IconButton
           icon="heart"
-          iconColor={isFav ? "red" : "gray"}
+          iconColor={exist ? "red" : "gray"}
           size={24}
           onPress={toggleFavorite}
           style={styles.favoriteIcon}
         />
       </View>
 
-      
       <Card.Content style={styles.content}>
         <View style={styles.titleRow}>
           <Text style={styles.title}>{course.course_name}</Text>
@@ -97,4 +101,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
