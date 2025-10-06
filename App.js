@@ -11,6 +11,8 @@ import Home from './src/pages/Home';
 import Favorites from './src/pages/Favorites';
 import Courses from './src/pages/courses';
 import CoursesDetails from './src/pages/CoursesDetails';
+import { Provider } from 'react-redux';
+import storeToolKit from './Store/FavSlice';
 
 
 
@@ -31,15 +33,17 @@ function MainDrawer() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="login">
-        <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
-        {/* <Stack.Screen name="Courses" component={Courses} /> */}
-        <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
-        <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={storeToolKit}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="login">
+          <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+          <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
+          {/* <Stack.Screen name="Courses" component={Courses} /> */}
+          <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
+          <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
 
 
   );
