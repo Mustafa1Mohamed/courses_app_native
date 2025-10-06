@@ -76,7 +76,7 @@ export default function Login() {
         if (storedUser) {
             const user = JSON.parse(storedUser);
             if (user.username === username && user.password === password) {
-                navigation.navigate("home");
+                navigation.navigate("All Courses");
             } else {
                 alert("Invalid username or password");
             }

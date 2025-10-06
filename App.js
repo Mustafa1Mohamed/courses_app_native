@@ -7,11 +7,12 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Login from './src/pages/login';
 import Register from './src/pages/register';
+import Home from './src/pages/Home';
+import Favorites from './src/pages/Favorites';
+import Courses from './src/pages/courses';
+import CoursesDetails from './src/pages/CoursesDetails';
 
-import Courses from "./src/pages/Courses";
-import Home from "./src/pages/Home";
-import Favorites from "./src/pages/Favorites";
-import CoursesDetails from "./src/pages/CoursesDetails";
+
 
 
 const Stack = createStackNavigator();
@@ -20,22 +21,23 @@ const Drawer = createDrawerNavigator();
 function MainDrawer() {
   return (
 
-    <Drawer.Navigator screenOptions={{ headerShown: false }}>
+    <Drawer.Navigator screenOptions={{ headerShown: true }}>
       <Drawer.Screen name="Home" component={Home} />
-          <Drawer.Screen name="Favorites" component={Favorites} />  
+      <Drawer.Screen name="Courses" component={Courses} />
+      <Drawer.Screen name="Favorites" component={Favorites} />
     </Drawer.Navigator>
   );
 }
 
 export default function App() {
   return (
-<NavigationContainer>
+    <NavigationContainer>
       <Stack.Navigator initialRouteName="login">
-        <Stack.Screen name="login" component={Login}  options={{headerShown: false}}/>
-        <Stack.Screen name="register" component={Register} options={{headerShown: false}} />
-<Stack.Screen name="Courses" component={Courses} />
-  <Stack.Screen name="All Courses" component={MainDrawer}/>
-      <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
+        <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
+        {/* <Stack.Screen name="Courses" component={Courses} /> */}
+        <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
+        <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
       </Stack.Navigator>
     </NavigationContainer>
 
