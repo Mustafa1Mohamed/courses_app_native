@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import { ScrollView } from "react-native";
 import Header from "../components/Header";
-import AboutUs from "../components/AboutUs";
+import AboutUs from "./AboutUs";
 import FeaturedCourses from "../components/FeaturedCourses";
 import Footer from "../components/Footer";
 
@@ -10,9 +10,8 @@ export default function Home() {
         <ScrollView>
         <View>
             <Header />
-            <AboutUs />
             <FeaturedCourses />
-            <Footer />
+           
 
         </View>
         </ScrollView>

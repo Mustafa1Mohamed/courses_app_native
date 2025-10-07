@@ -7,11 +7,11 @@ const AboutUs = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>About Us</Text>
+     
       {Platform.OS === 'web' ? (
         <iframe
           width="100%"
-          height="220"
+          height="300"
           src={videoUrl}
           title="About Us Video"
           frameBorder="0"
@@ -34,16 +34,10 @@ const AboutUs = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    marginTop: 45,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 8,
-    
+    marginTop: 20,
   },
   video: {
-    height: 220,
+    height: 300,
     borderRadius: 6,
   },
 });
