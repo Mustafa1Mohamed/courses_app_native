@@ -8,6 +8,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from './src/pages/login';
 import Register from './src/pages/register';
 import Home from './src/pages/Home';
+import AboutUs from './src/pages/AboutUs';
 import Favorites from './src/pages/Favorites';
 import Courses from './src/pages/courses';
 import CoursesDetails from './src/pages/CoursesDetails';
@@ -25,6 +26,7 @@ function MainDrawer() {
 
     <Drawer.Navigator screenOptions={{ headerShown: true }}>
       <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name='About Us' component={AboutUs} />
       <Drawer.Screen name="Courses" component={Courses} />
       <Drawer.Screen name="Favorites" component={Favorites} />
     </Drawer.Navigator>
