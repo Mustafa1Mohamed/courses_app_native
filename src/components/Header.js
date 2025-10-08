@@ -2,8 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet, ImageBackground } from "react-native";
 import { Button } from "react-native-paper";
 import headerImg from "../imgs/header.png";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
+  const { t } = useTranslation();
   return (
     <ImageBackground
       source={headerImg}
@@ -13,10 +15,9 @@ const Header = () => {
     >
       <View style={styles.overlay}>
         <View style={styles.content}>
-          <Text style={styles.title}>Best Online Learning System</Text>
+          <Text style={styles.title}>{t("Best Online Learning System")}</Text>
           <Text style={styles.subtitle}>
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
+            {t("Here where you can find the best courses for you to build your career and learn new skills  online. Join us and start learning today!")}
           </Text>
 
           <Button
@@ -25,7 +26,7 @@ const Header = () => {
             style={styles.button}
             labelStyle={styles.buttonText}
           >
-            Read More
+            {t("Read More")}
           </Button>
         </View>
       </View>

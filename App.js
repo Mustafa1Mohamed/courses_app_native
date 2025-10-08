@@ -1,6 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// import './i18n';
+import { I18nextProvider, useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, I18nManager } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -14,40 +15,65 @@ import Courses from './src/pages/courses';
 import CoursesDetails from './src/pages/CoursesDetails';
 import { Provider } from 'react-redux';
 import storeToolKit from './Store/FavSlice';
-
-
-
+import i18n from './i18n';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 function MainDrawer() {
-  return (
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  const [drawerPosition, setDrawerPosition] = useState(isRTL ? 'right' : 'left');
 
-    <Drawer.Navigator screenOptions={{ headerShown: true }}>
-      <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name='About Us' component={AboutUs} />
-      <Drawer.Screen name="Courses" component={Courses} />
-      <Drawer.Screen name="Favorites" component={Favorites} />
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      const rtl = lng === 'ar';
+      setDrawerPosition(rtl ? 'right' : 'left');
+
+      if (rtl !== I18nManager.isRTL) {
+        I18nManager.forceRTL(rtl);
+        I18nManager.allowRTL(true);
+      }
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => i18n.off('languageChanged', handleLanguageChange);
+  }, [i18n]);
+
+  return (
+    <Drawer.Navigator
+      key={drawerPosition}
+      screenOptions={{
+        headerShown: true,
+        drawerPosition: drawerPosition,
+        drawerType: 'front',
+        drawerStyle: { width: '70%' },
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      <Drawer.Screen name={t("Home")} component={Home} />
+      <Drawer.Screen name={t("About Us")} component={AboutUs} />
+      <Drawer.Screen name={t("Courses")} component={Courses} />
+      <Drawer.Screen name={t("Favorites")} component={Favorites} />
     </Drawer.Navigator>
   );
 }
 
 export default function App() {
   return (
-    <Provider store={storeToolKit}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="login">
-          <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
-          <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
-          {/* <Stack.Screen name="Courses" component={Courses} /> */}
-          <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
-          <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
-
-
+    <I18nextProvider i18n={i18n}>
+      <Provider store={storeToolKit}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="login">
+            <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
+            <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
+            <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
+            <Stack.Screen name="Courses" component={Courses} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </I18nextProvider>
   );
 }
 
@@ -58,4 +84,3 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-

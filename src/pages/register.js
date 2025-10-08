@@ -1,18 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
     StyleSheet,
+    I18nManager,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Feather from '@expo/vector-icons/Feather';
+import { useTranslation } from "react-i18next";
+import { Button } from "react-native-paper";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function Register() {
     const navigation = useNavigation();
+    const { t, i18n } = useTranslation();
+    const [direction, setDirection] = useState(i18n.language === "ar" ? "rtl" : "ltr");
+
     const [form, setForm] = useState({
         name: "",
         username: "",
@@ -20,97 +26,100 @@ export default function Register() {
         password: "",
         confirmPassword: "",
     });
-
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        const newDir = i18n.language === "ar" ? "rtl" : "ltr";
+        setDirection(newDir);
+    }, [i18n.language]);
 
     const handleChange = (field, value) => {
         setForm((prev) => ({ ...prev, [field]: value }));
     };
 
     const validate = () => {
-        const newErrors = {
-            name: "",
-            username: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-        };
+        const newErrors = {};
 
-        if (!form.name.trim()) newErrors.name = "Name is required";
+        if (!form.name.trim()) newErrors.name = t("Name is required");
 
         if (!form.username.trim()) {
-            newErrors.username = "Username is required";
+            newErrors.username = t("Username is required");
         } else if (form.username.length < 3) {
-            newErrors.username = "Username must be at least 3 characters";
-        } else {
-            newErrors.username = "";
+            newErrors.username = t("Username must be at least 3 characters");
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!form.email.trim()) {
-            newErrors.email = "Email is required";
+            newErrors.email = t("Email is required");
         } else if (!emailRegex.test(form.email)) {
-            newErrors.email = "Invalid email address";
-        } else {
-            newErrors.email = "";
+            newErrors.email = t("Invalid email address");
         }
 
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-
         if (!form.password) {
-            newErrors.password = "Password is required";
+            newErrors.password = t("Password is required");
         } else if (form.password.length < 6) {
-            newErrors.password = "Password must be at least 6 characters";
+            newErrors.password = t("Password must be at least 6 characters");
         } else if (!passwordRegex.test(form.password)) {
-            newErrors.password =
-                "Password must contain at least one letter and one number";
-        } else {
-            newErrors.password = "";
+            newErrors.password = t("Password must contain at least one letter and one number");
         }
 
         if (!form.confirmPassword) {
-            newErrors.confirmPassword = "Please confirm your password";
+            newErrors.confirmPassword = t("Please confirm your password");
         } else if (form.confirmPassword !== form.password) {
-            newErrors.confirmPassword = "Passwords do not match";
-        } else {
-            newErrors.confirmPassword = "";
+            newErrors.confirmPassword = t("Passwords do not match");
         }
 
         setErrors(newErrors);
-        return !Object.values(newErrors).some(error => error !== "");
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async () => {
         if (!validate()) return;
-        console.log("hello");
+
         const newUser = {
             name: form.name.trim(),
             username: form.username.trim(),
             password: form.password,
         };
 
-        await AsyncStorage.setItem("user", JSON.stringify(newUser));
-        alert("Registration successful! Redirecting to login...");
+        let users = JSON.parse(await AsyncStorage.getItem("users")) || [];
+        users.push(newUser);
+        await AsyncStorage.setItem("users", JSON.stringify(users));
+        await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
+
+        alert(t("Registration successful! Redirecting to login..."));
         navigation.navigate("login");
     };
 
     const inputStyle = (error, value) => [
         styles.input,
+        { textAlign: direction === "rtl" ? "right" : "left" },
         error ? styles.inputError : value ? styles.inputSuccess : null,
     ];
 
     return (
-        <View style={styles.screen}>
-            <View style={styles.formContainer}>
-                <Text style={styles.title}>Register</Text>
+        <View style={[styles.screen, { direction, writingDirection: direction }]}>
+            <Button
+                style={styles.langBtn}
+                mode="contained"
+                onPress={() => {
+                    const newLang = i18n.language === "en" ? "ar" : "en";
+                    i18n.changeLanguage(newLang);
+                }}
+            >
+                {i18n.language === "en" ? "AR" : "EN"}
+            </Button>
 
-                {/* Name */}
+            <View style={styles.formContainer}>
+                <Text style={styles.title}>{t("Register")}</Text>
+
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={inputStyle(errors.name, form.name)}
-                        placeholder="Full Name"
+                        placeholder={t("Full Name")}
                         placeholderTextColor="#aaa"
                         value={form.name}
                         onChangeText={(val) => handleChange("name", val)}
@@ -118,14 +127,15 @@ export default function Register() {
                     {errors.name ? (
                         <Text style={styles.errorText}>{errors.name}</Text>
                     ) : form.name ? (
-                        <Text style={styles.successText}>Looks good!</Text>
+                        <Text style={styles.successText}>{t("Looks good!")}</Text>
                     ) : null}
                 </View>
 
+        
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={inputStyle(errors.username, form.username)}
-                        placeholder="Username"
+                        placeholder={t("Username")}
                         placeholderTextColor="#aaa"
                         value={form.username}
                         onChangeText={(val) => handleChange("username", val)}
@@ -133,16 +143,15 @@ export default function Register() {
                     {errors.username ? (
                         <Text style={styles.errorText}>{errors.username}</Text>
                     ) : form.username ? (
-                        <Text style={styles.successText}>Looks good!</Text>
+                        <Text style={styles.successText}>{t("Looks good!")}</Text>
                     ) : null}
                 </View>
 
-          
-
+         
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={inputStyle(errors.email, form.email)}
-                        placeholder="Email"
+                        placeholder={t("Email")}
                         placeholderTextColor="#aaa"
                         value={form.email}
                         onChangeText={(val) => handleChange("email", val)}
@@ -150,15 +159,19 @@ export default function Register() {
                     {errors.email ? (
                         <Text style={styles.errorText}>{errors.email}</Text>
                     ) : form.email ? (
-                        <Text style={styles.successText}>Looks good!</Text>
+                        <Text style={styles.successText}>{t("Looks good!")}</Text>
                     ) : null}
                 </View>
 
+        
                 <View style={styles.inputContainer}>
                     <View style={styles.inputWrapper}>
                         <TextInput
-                            style={[inputStyle(errors.password, form.password), { paddingRight: 40 }]}
-                            placeholder="Password"
+                            style={[
+                                inputStyle(errors.password, form.password),
+                                i18n.language === "ar" ? { paddingLeft: 40 } : { paddingRight: 40 }
+                            ]}
+                            placeholder={t("Password")}
                             placeholderTextColor="#aaa"
                             secureTextEntry={!showPassword}
                             value={form.password}
@@ -166,30 +179,32 @@ export default function Register() {
                         />
                         <TouchableOpacity
                             onPress={() => setShowPassword((prev) => !prev)}
-                            style={styles.eyeIcon}
+                            style={[
+                                styles.eyeIcon,
+                                direction === "rtl" ? { left: 10, right: "auto" } : { right: 10 },
+                            ]}
                         >
                             {!showPassword ? (
-                                // <AntDesign name="eye" size={22} color="#6b7280" />
                                 <Feather name="eye" size={22} color="#6b7280" />
-
                             ) : (
-                                    <AntDesign name="eye-invisible" size={22} color="#6b7280" />
-
+                                <AntDesign name="eye-invisible" size={22} color="#6b7280" />
                             )}
                         </TouchableOpacity>
                     </View>
                     {errors.password ? (
                         <Text style={styles.errorText}>{errors.password}</Text>
                     ) : form.password ? (
-                        <Text style={styles.successText}>Password looks good.</Text>
+                        <Text style={styles.successText}>{t("Looks good!")}</Text>
                     ) : null}
                 </View>
 
+                {/* Confirm Password */}
                 <View style={styles.inputContainer}>
                     <View style={styles.inputWrapper}>
                         <TextInput
-                            style={[inputStyle(errors.confirmPassword, form.confirmPassword), { paddingRight: 40 }]}
-                            placeholder="Confirm Password"
+                            style={[inputStyle(errors.confirmPassword, form.confirmPassword),
+                                i18n.language === "ar" ? { paddingLeft: 40 } : { paddingRight: 40 }]}
+                            placeholder={t("Confirm Password")}
                             placeholderTextColor="#aaa"
                             secureTextEntry={!showConfirmPassword}
                             value={form.confirmPassword}
@@ -197,7 +212,10 @@ export default function Register() {
                         />
                         <TouchableOpacity
                             onPress={() => setShowConfirmPassword((prev) => !prev)}
-                            style={styles.eyeIcon}
+                            style={[
+                                styles.eyeIcon,
+                                direction === "rtl" ? { left: 10, right: "auto" } : { right: 10 },
+                            ]}
                         >
                             {!showConfirmPassword ? (
                                 <Feather name="eye" size={22} color="#6b7280" />
@@ -209,20 +227,20 @@ export default function Register() {
                     {errors.confirmPassword ? (
                         <Text style={styles.errorText}>{errors.confirmPassword}</Text>
                     ) : form.confirmPassword ? (
-                        <Text style={styles.successText}>Passwords match.</Text>
+                        <Text style={styles.successText}>{t("Passwords match.")}</Text>
                     ) : null}
                 </View>
 
+                {/* Register Button */}
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Register</Text>
+                    <Text style={styles.buttonText}>{t("Register")}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() =>
-                    navigation.goBack()
-                }>
+                {/* Login Link */}
+                <TouchableOpacity onPress={() => navigation.navigate("login")}>
                     <Text style={styles.registerText}>
-                        Already have an account?{" "}
-                        <Text style={styles.registerLink}>Login</Text>
+                        {t("Already have an account?")}{" "}
+                        <Text style={styles.registerLink}>{t("Login")}</Text>
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -237,6 +255,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#f3f4f6",
         padding: 20,
+    },
+    langBtn: {
+        alignSelf: "flex-end",
+        marginBottom: 20,
+        backgroundColor: "#6366f1",
+        padding: 0,
+        borderRadius: 8,
     },
     formContainer: {
         backgroundColor: "#fff",
@@ -257,13 +282,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 24,
     },
-    inputContainer: {
-        marginBottom: 18,
-    },
-    inputWrapper: {
-        position: "relative",
-        justifyContent: "center",
-    },
+    inputContainer: { marginBottom: 18 },
+    inputWrapper: { position: "relative", justifyContent: "center" },
     input: {
         borderBottomWidth: 2,
         borderColor: "#d1d5db",
@@ -276,27 +296,14 @@ const styles = StyleSheet.create({
     },
     eyeIcon: {
         position: "absolute",
-        right: 10,
         top: "50%",
         transform: [{ translateY: -12 }],
         padding: 4,
     },
-    inputError: {
-        borderColor: "#dc2626",
-    },
-    inputSuccess: {
-        borderColor: "#16a34a",
-    },
-    errorText: {
-        color: "#dc2626",
-        fontSize: 12,
-        marginTop: 4,
-    },
-    successText: {
-        color: "#16a34a",
-        fontSize: 12,
-        marginTop: 4,
-    },
+    inputError: { borderColor: "#dc2626" },
+    inputSuccess: { borderColor: "#16a34a" },
+    errorText: { color: "#dc2626", fontSize: 12, marginTop: 4 },
+    successText: { color: "#16a34a", fontSize: 12, marginTop: 4 },
     button: {
         backgroundColor: "#6366f1",
         paddingVertical: 14,
@@ -315,8 +322,5 @@ const styles = StyleSheet.create({
         color: "#6b7280",
         fontSize: 14,
     },
-    registerLink: {
-        color: "#6366f1",
-        fontWeight: "600",
-    },
+    registerLink: { color: "#6366f1", fontWeight: "600" },
 });

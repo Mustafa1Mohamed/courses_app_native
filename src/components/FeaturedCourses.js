@@ -3,10 +3,25 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MyCard from "./MyCard";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const FeaturedCourses = () => {
+  const { t , i18n} = useTranslation();
   const [courses, setCourses] = useState([]);
   const navigation = useNavigation(); 
+
+  const [direction, setDirection] = useState(i18n.language === "ar" ? "rtl" : "ltr");
+  useEffect(() => {
+    const handleLanguageChange = (lang) => {
+      setDirection(lang === "ar" ? "rtl" : "ltr");
+    };
+
+    i18n.on("languageChanged", handleLanguageChange);
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChange);
+    };
+  }, [i18n]);
 
   useEffect(() => {
     axios
@@ -16,14 +31,14 @@ const FeaturedCourses = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { direction }]}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Featured Courses</Text>
+        <Text style={styles.title}>{t("Featured Courses")}</Text>
         <TouchableOpacity
           style={styles.allCoursesBtn}
           onPress={() => navigation.navigate("Courses")} 
         >
-          <Text style={styles.allCoursesText}>All Courses</Text>
+          <Text style={styles.allCoursesText}>{t("All Courses")}</Text>
         </TouchableOpacity>
       </View>
 

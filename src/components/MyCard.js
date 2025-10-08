@@ -4,8 +4,10 @@ import { Card, Button, IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFav } from "../../Store/FavSlice.js";
+import { useTranslation } from "react-i18next";
 
 const MyCard = ({ course, showButton = true }) => {
+  const {t}=useTranslation()
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -36,15 +38,15 @@ const MyCard = ({ course, showButton = true }) => {
 
       <Card.Content style={styles.content}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{course.course_name}</Text>
+          <Text style={styles.title}>{t(course.course_name)}</Text>
           {showButton && (
             <Button mode="contained" onPress={handlePress} style={styles.viewButton}>
-              View Details
+              {t("View Details")}
             </Button>
           )}
         </View>
 
-        <Text style={styles.plan}>{course.course_plan}</Text>
+        <Text style={styles.plan}>{t(course.course_plan)}</Text>
         <Text style={styles.price}>${course.course_price}</Text>
       </Card.Content>
     </Card>
