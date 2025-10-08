@@ -38,7 +38,7 @@ export default Header;
 const styles = StyleSheet.create({
   background: {
     width: "100%",
-    height: 400,
+    height: 450,
     justifyContent: "center",
     alignItems: "center",
   },
