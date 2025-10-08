@@ -30,7 +30,8 @@ export default function Login() {
     // i want to check if there is user already logged in
     useEffect(() => {
         const checkLoggedIn = async () => {
-            const user = await AsyncStorage.getItem("user");
+            const user = await AsyncStorage.getItem("currentUser");
+            // console.log(user);
             if (user) {
                 navigation.navigate("All Courses");
             }

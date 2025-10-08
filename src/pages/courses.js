@@ -3,9 +3,22 @@ import { View, Text, TextInput, FlatList, StyleSheet } from "react-native";
 import axios from "axios";
 import { Button } from "react-native-paper";
 import MyCard from "../components/MyCard";
+import { useTranslation } from "react-i18next";
 
 function Courses() {
-  
+  const { t, i18n } = useTranslation();
+  const [direction, setDirection] = useState(i18n.language === "ar" ? "rtl" : "ltr");
+  useEffect(() => {
+    const handleLanguageChange = (lang) => {
+      setDirection(lang === "ar" ? "rtl" : "ltr");
+    };
+
+    i18n.on("languageChanged", handleLanguageChange);
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChange);
+    };
+  }, [i18n]);
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -46,10 +59,10 @@ function Courses() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Courses</Text>
+      <Text style={styles.title}>{t("Courses")}</Text>
 
       <TextInput
-        placeholder="Search courses..."
+        placeholder={t("Search courses...")}
         value={searchTerm}
         onChangeText={(text) => setSearchTerm(text)}
         style={styles.input}
@@ -62,21 +75,21 @@ function Courses() {
           renderItem={({ item }) => <MyCard course={item} />}
         />
       ) : (
-        <Text style={styles.noCourses}>No courses found.</Text>
+        <Text style={styles.noCourses}>{t("No courses found.")}</Text>
       )}
 
       {totalPages > 1 && (
-        <View style={styles.pagination}>
+        <View style={[styles.pagination, { flexDirection: direction === "rtl" ? "row-reverse" : "row" }]}>
           <Button
             mode="outlined"
             onPress={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
             style={styles.pageButton}
           >
-            Previous
+            {t("Previous")}
           </Button>
 
-          <Text style={styles.pageText}>{`${currentPage} / ${totalPages}`}</Text>
+          <Text style={{ ...styles.pageText, writingDirection: direction }}>{`${currentPage} / ${totalPages}`}</Text>
 
           <Button
             mode="outlined"
@@ -84,7 +97,7 @@ function Courses() {
             disabled={currentPage === totalPages}
             style={styles.pageButton}
           >
-            Next
+            {t("Next")}
           </Button>
         </View>
       )}

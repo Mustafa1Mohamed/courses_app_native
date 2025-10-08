@@ -69,6 +69,7 @@ export default function App() {
             <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
             <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
             <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
+            <Stack.Screen name="Courses" component={Courses} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
