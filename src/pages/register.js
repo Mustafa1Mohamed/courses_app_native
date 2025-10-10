@@ -90,7 +90,7 @@ export default function Register() {
         await AsyncStorage.setItem("users", JSON.stringify(users));
         await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
 
-        alert(t("Registration successful! Redirecting to login..."));
+        // alert(t("Registration successful! Redirecting to login..."));
         navigation.navigate("login");
     };
 

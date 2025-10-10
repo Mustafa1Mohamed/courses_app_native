@@ -27,17 +27,7 @@ export default function Login() {
         passwordErr: "",
     });
 
-    // i want to check if there is user already logged in
-    useEffect(() => {
-        const checkLoggedIn = async () => {
-            const user = await AsyncStorage.getItem("currentUser");
-            // console.log(user);
-            if (user) {
-                navigation.navigate("All Courses");
-            }
-        };
-        checkLoggedIn();
-    }, []);
+    
     
     useEffect(() => {
         const newDir = i18n.language === "ar" ? "rtl" : "ltr";

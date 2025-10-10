@@ -16,6 +16,8 @@ import CoursesDetails from './src/pages/CoursesDetails';
 import { Provider } from 'react-redux';
 import storeToolKit from './Store/FavSlice';
 import i18n from './i18n';
+import ChatbotScreen from './src/pages/chat';
+import SplashScreen from './src/pages/splash_screen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -55,6 +57,7 @@ function MainDrawer() {
       <Drawer.Screen name={t("About Us")} component={AboutUs} />
       <Drawer.Screen name={t("Courses")} component={Courses} />
       <Drawer.Screen name={t("Favorites")} component={Favorites} />
+      <Drawer.Screen name={t("ChatBot")}  component={ChatbotScreen} />
     </Drawer.Navigator>
   );
 }
@@ -64,7 +67,8 @@ export default function App() {
     <I18nextProvider i18n={i18n}>
       <Provider store={storeToolKit}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="login">
+          <Stack.Navigator initialRouteName="splash">
+            <Stack.Screen name='splash' component={SplashScreen} options={{ headerShown: false }} />
             <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
             <Stack.Screen name="register" component={Register} options={{ headerShown: false }} />
             <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
