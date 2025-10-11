@@ -58,7 +58,6 @@ function MainDrawer() {
       <Drawer.Screen name={t("About Us")} component={AboutUs} />
       <Drawer.Screen name={t("Courses")} component={Courses} />
       <Drawer.Screen name={t("Favorites")} component={Favorites} />
-      <Drawer.Screen name={t("Admin Panel")} component={AdminPanel} /> 
       <Drawer.Screen name={t("ChatBot")}  component={ChatbotScreen} />
     </Drawer.Navigator>
   );
