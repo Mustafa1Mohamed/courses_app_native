@@ -29,8 +29,8 @@ export default function Login() {
         passwordErr: "",
     });
 
-    
-    
+
+
     useEffect(() => {
         const newDir = i18n.language === "ar" ? "rtl" : "ltr";
         setDirection(newDir);
@@ -85,23 +85,21 @@ export default function Login() {
 
         const storedUser = await AsyncStorage.getItem("currentUser");
         if (storedUser) {
-    const user = JSON.parse(storedUser);
-
-    if (user.username === username && user.password === password) {
-        // تحقق إذا كان المستخدم admin
-        if (username.toLowerCase() === "admin") {
-            navigation.navigate("AdminPanel");
+            const user = JSON.parse(storedUser);
+            if (user.username === username && user.password === password) {
+                if (user.username=== "admin") {
+                    navigation.navigate("AdminPanel");
+                } else {
+                    navigation.navigate("All Courses");
+                }
+            } else {
+                alert(t("Invalid username or password"));
+            }
         } else {
-            navigation.navigate("All Courses");
+            alert(t("No account found. Redirecting to Register..."));
+            navigation.navigate("register");
         }
-    } else {
-        alert(t("Invalid username or password"));
-    }
-}
-    }
-        // else {
-        //     alert(t("No user found. Please register first."));
-        // }
+    };
 
     return (
         <KeyboardAvoidingView
@@ -203,7 +201,7 @@ export default function Login() {
                     </TouchableOpacity>
                 </View>
             </View>
-            </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
 }
 

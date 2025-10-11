@@ -46,20 +46,24 @@ export default function SplashScreen() {
         moveUp()
         MoveRightToHorizontal()
     }, [])
-        useEffect(() => {
-            const checkLoggedIn = async () => {
-                const user = await AsyncStorage.getItem("currentUser");
-                // console.log(user);
-                if (user) {
-                    navigate.navigate("All Courses");
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            const user = await AsyncStorage.getItem("currentUser");
+            // console.log(user);
+            if (user) {
+                if (user.username === "admin") {
+                    navigate.navigate("AdminPanel");
                 } else {
-                    navigate.replace("login");
+                    navigate.navigate("All Courses");
                 }
-            };
-            setTimeout(() => {
-                checkLoggedIn();
-            }, 3000);
-        }, []);
+            } else {
+                navigate.replace("login");
+            }
+        };
+        setTimeout(() => {
+            checkLoggedIn();
+        }, 3000);
+    }, []);
     return (
         <View style={styles.container}>
             <Animated.View style={{ transform: [{ translateY: translateY }] }}>
