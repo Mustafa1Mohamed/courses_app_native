@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     I18nManager,
+    KeyboardAvoidingView,
+    Platform,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
@@ -96,101 +98,106 @@ export default function Login() {
     };
 
     return (
-        <View style={[styles.screen, { direction: direction, writingDirection: direction }]}>
-            <Button
-                style={styles.btn}
-                mode="contained"
-                onPress={() => {
-                    const newLang = i18n.language === "en" ? "ar" : "en";
-                    i18n.changeLanguage(newLang);
-                }}
-            >
-                {i18n.language === "en" ? "AR" : "EN"}
-            </Button>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.keyboard}
+        >
+            <View style={[styles.screen, { direction: direction, writingDirection: direction }]}>
+                <Button
+                    style={styles.btn}
+                    mode="contained"
+                    onPress={() => {
+                        const newLang = i18n.language === "en" ? "ar" : "en";
+                        i18n.changeLanguage(newLang);
+                    }}
+                >
+                    {i18n.language === "en" ? "AR" : "EN"}
+                </Button>
 
-            <View style={styles.formContainer}>
-                <Text style={[styles.title, { textAlign:"center" }]}>
-                    {t("Login")}
-                </Text>
+                <View style={styles.formContainer}>
+                    <Text style={[styles.title, { textAlign: "center" }]}>
+                        {t("Login")}
+                    </Text>
 
-                {/* Username */}
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={[
-                            styles.input,
-                            { textAlign: direction === "rtl" ? "right" : "left" },
-                            errors.usernameErr
-                                ? styles.inputError
-                                : username
-                                    ? styles.inputSuccess
-                                    : null,
-                        ]}
-                        placeholder={t("Username")}
-                        placeholderTextColor="#aaa"
-                        value={username}
-                        onChangeText={setUsername}
-                    />
-                    {errors.usernameErr ? (
-                        <Text style={styles.errorText}>{errors.usernameErr}</Text>
-                    ) : username ? (
-                        <Text style={styles.successText}>{t("Looks good!")}</Text>
-                    ) : null}
-                </View>
-
-                {/* Password */}
-                <View style={styles.inputContainer}>
-                    <View style={styles.passwordWrapper}>
+                    {/* Username */}
+                    <View style={styles.inputContainer}>
                         <TextInput
                             style={[
                                 styles.input,
                                 { textAlign: direction === "rtl" ? "right" : "left" },
-                                errors.passwordErr
+                                errors.usernameErr
                                     ? styles.inputError
-                                    : password
+                                    : username
                                         ? styles.inputSuccess
                                         : null,
                             ]}
-                            placeholder={t("Password")}
+                            placeholder={t("Username")}
                             placeholderTextColor="#aaa"
-                            secureTextEntry={!showPassword}
-                            value={password}
-                            onChangeText={setPassword}
+                            value={username}
+                            onChangeText={setUsername}
                         />
-                        <TouchableOpacity
-                            onPress={() => setShowPassword(!showPassword)}
-                            style={[
-                                styles.eyeButton,
-                                direction === "rtl" ? { left: 10, right: "auto" } : { right: 10, left: "auto" },
-                            ]}
-                        >
-                            {showPassword ? (
-                                <AntDesign name="eye-invisible" size={24} color="#6b7280" />
-                            ) : (
-                                <Feather name="eye" size={24} color="#6b7280" />
-                            )}
-                        </TouchableOpacity>
+                        {errors.usernameErr ? (
+                            <Text style={styles.errorText}>{errors.usernameErr}</Text>
+                        ) : username ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
                     </View>
-                    {errors.passwordErr ? (
-                        <Text style={styles.errorText}>{errors.passwordErr}</Text>
-                    ) : password ? (
-                        <Text style={styles.successText}>{t("Looks good!")}</Text>
-                    ) : null}
+
+                    {/* Password */}
+                    <View style={styles.inputContainer}>
+                        <View style={styles.passwordWrapper}>
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    { textAlign: direction === "rtl" ? "right" : "left" },
+                                    errors.passwordErr
+                                        ? styles.inputError
+                                        : password
+                                            ? styles.inputSuccess
+                                            : null,
+                                ]}
+                                placeholder={t("Password")}
+                                placeholderTextColor="#aaa"
+                                secureTextEntry={!showPassword}
+                                value={password}
+                                onChangeText={setPassword}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                                style={[
+                                    styles.eyeButton,
+                                    direction === "rtl" ? { left: 10, right: "auto" } : { right: 10, left: "auto" },
+                                ]}
+                            >
+                                {showPassword ? (
+                                    <AntDesign name="eye-invisible" size={24} color="#6b7280" />
+                                ) : (
+                                    <Feather name="eye" size={24} color="#6b7280" />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {errors.passwordErr ? (
+                            <Text style={styles.errorText}>{errors.passwordErr}</Text>
+                        ) : password ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
+                    </View>
+
+                    {/* Login Button */}
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>{t("Login")}</Text>
+                    </TouchableOpacity>
+
+                    {/* Register Link */}
+                    <TouchableOpacity onPress={() => navigation.navigate("register")}>
+                        <Text style={styles.registerText}>
+                            {t("Don't have an account?")}{" "}
+                            <Text style={styles.registerLink}>{t("Register")}</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-                {/* Login Button */}
-                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>{t("Login")}</Text>
-                </TouchableOpacity>
-
-                {/* Register Link */}
-                <TouchableOpacity onPress={() => navigation.navigate("register")}>
-                    <Text style={styles.registerText}>
-                        {t("Don't have an account?")}{" "}
-                        <Text style={styles.registerLink}>{t("Register")}</Text>
-                    </Text>
-                </TouchableOpacity>
             </View>
-        </View>
+            </KeyboardAvoidingView>
     );
 }
 
@@ -201,6 +208,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#f3f4f6",
         padding: 20,
+    },
+    keyboard: {
+        flex: 1,
     },
     formContainer: {
         backgroundColor: "#fff",
