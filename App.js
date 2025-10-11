@@ -76,7 +76,7 @@ export default function App() {
             <Stack.Screen name="All Courses" component={MainDrawer} options={{ headerShown: false }} />
             <Stack.Screen name="CoursesDetails" component={CoursesDetails} />
             <Stack.Screen name="Courses" component={Courses} />
-              <Stack.Screen name="AdminPanel"component={AdminPanel}options={{ headerShown: false }}/>
+              <Stack.Screen name="AdminPanel"component={AdminPanel}options={{headerStatusBarHeight: 30,headerShown: false }}/>
           </Stack.Navigator>
         </NavigationContainer>
         </PaperProvider>

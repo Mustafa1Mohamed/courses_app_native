@@ -850,6 +850,15 @@ export default function AdminPanel({ navigation }) {
           }}
           iconColor={theme.colors.primary}
         />
+        <IconButton
+          icon="logout"
+          size={28}
+          onPress={() => {
+            AsyncStorage.removeItem("currentUser");
+            navigation.navigate("login");
+          }}
+          iconColor={theme.colors.error}
+        />
       </View>
 
       {loading && <ActivityIndicator animating style={{ marginVertical: 12 }} color={theme.colors.primary} />}

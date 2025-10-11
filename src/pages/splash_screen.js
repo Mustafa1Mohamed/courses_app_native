@@ -35,7 +35,7 @@ export default function SplashScreen() {
     }
     const MoveRightToHorizontal = () => {
         const newPos = horizontal + 20
-        if (newPos > 0) return;
+        // if (newPos > 0) return;
         setHorizontal(newPos)
 
         Animated.timing(translateX, {
@@ -51,18 +51,23 @@ export default function SplashScreen() {
     }, [])
     useEffect(() => {
         const checkLoggedIn = async () => {
-            const user = await AsyncStorage.getItem("currentUser");
-            // console.log(user);
-            if (user) {
+            const userData = await AsyncStorage.getItem("currentUser");
+
+            if (userData) {
+                const user = JSON.parse(userData);
+
                 if (user.username === "admin") {
+                    // console.log("Admin user detected:", user);
                     navigate.navigate("AdminPanel");
                 } else {
+                    console.log("Normal user detected:", user);
                     navigate.navigate("All Courses");
                 }
             } else {
                 navigate.replace("login");
             }
         };
+
         setTimeout(() => {
             checkLoggedIn();
         }, 3000);
