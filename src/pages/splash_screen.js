@@ -12,6 +12,7 @@ export default function SplashScreen() {
     const navigate = useNavigation()
     const moveDown = () => {
         const newPos = vertical - 20
+        if (newPos < -300) return;
         setVertical(newPos)
 
         Animated.timing(translateY, {
@@ -23,6 +24,7 @@ export default function SplashScreen() {
     }
     const moveUp = () => {
         const newPos = vertical + 20
+        if (newPos > 300) return;
         setVertical(newPos)
 
         Animated.timing(translateY2, {
@@ -33,6 +35,7 @@ export default function SplashScreen() {
     }
     const MoveRightToHorizontal = () => {
         const newPos = horizontal + 20
+        if (newPos > 0) return;
         setHorizontal(newPos)
 
         Animated.timing(translateX, {

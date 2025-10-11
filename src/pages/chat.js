@@ -32,7 +32,7 @@ const ChatbotScreen = () => {
 
             if (!GEMINI_API_KEY) {
                 throw new Error(
-                    "API key not found. Please check your .env file (EXPO_PUBLIC_GEMINI_API_KEY)."
+                    "API key not found."
                 );
             }
 
