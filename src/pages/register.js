@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     StyleSheet,
     I18nManager,
+    KeyboardAvoidingView,
+    Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -90,7 +92,7 @@ export default function Register() {
         await AsyncStorage.setItem("users", JSON.stringify(users));
         await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
 
-        alert(t("Registration successful! Redirecting to login..."));
+        // alert(t("Registration successful! Redirecting to login..."));
         navigation.navigate("login");
     };
 
@@ -101,150 +103,154 @@ export default function Register() {
     ];
 
     return (
-        <View style={[styles.screen, { direction, writingDirection: direction }]}>
-            <Button
-                style={styles.langBtn}
-                mode="contained"
-                onPress={() => {
-                    const newLang = i18n.language === "en" ? "ar" : "en";
-                    i18n.changeLanguage(newLang);
-                }}
-            >
-                {i18n.language === "en" ? "AR" : "EN"}
-            </Button>
+        <KeyboardAvoidingView
+            style={[styles.keyboard, { flexDirection: direction === "rtl" ? "row-reverse" : "row" }]}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <View style={[styles.screen, { direction, writingDirection: direction }]}>
+                <Button
+                    style={styles.langBtn}
+                    mode="contained"
+                    onPress={() => {
+                        const newLang = i18n.language === "en" ? "ar" : "en";
+                        i18n.changeLanguage(newLang);
+                    }}
+                >
+                    {i18n.language === "en" ? "AR" : "EN"}
+                </Button>
 
-            <View style={styles.formContainer}>
-                <Text style={styles.title}>{t("Register")}</Text>
+                <View style={styles.formContainer}>
+                    <Text style={styles.title}>{t("Register")}</Text>
 
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={inputStyle(errors.name, form.name)}
-                        placeholder={t("Full Name")}
-                        placeholderTextColor="#aaa"
-                        value={form.name}
-                        onChangeText={(val) => handleChange("name", val)}
-                    />
-                    {errors.name ? (
-                        <Text style={styles.errorText}>{errors.name}</Text>
-                    ) : form.name ? (
-                        <Text style={styles.successText}>{t("Looks good!")}</Text>
-                    ) : null}
-                </View>
-
-        
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={inputStyle(errors.username, form.username)}
-                        placeholder={t("Username")}
-                        placeholderTextColor="#aaa"
-                        value={form.username}
-                        onChangeText={(val) => handleChange("username", val)}
-                    />
-                    {errors.username ? (
-                        <Text style={styles.errorText}>{errors.username}</Text>
-                    ) : form.username ? (
-                        <Text style={styles.successText}>{t("Looks good!")}</Text>
-                    ) : null}
-                </View>
-
-         
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={inputStyle(errors.email, form.email)}
-                        placeholder={t("Email")}
-                        placeholderTextColor="#aaa"
-                        value={form.email}
-                        onChangeText={(val) => handleChange("email", val)}
-                    />
-                    {errors.email ? (
-                        <Text style={styles.errorText}>{errors.email}</Text>
-                    ) : form.email ? (
-                        <Text style={styles.successText}>{t("Looks good!")}</Text>
-                    ) : null}
-                </View>
-
-        
-                <View style={styles.inputContainer}>
-                    <View style={styles.inputWrapper}>
+                    <View style={styles.inputContainer}>
                         <TextInput
-                            style={[
-                                inputStyle(errors.password, form.password),
-                                i18n.language === "ar" ? { paddingLeft: 40 } : { paddingRight: 40 }
-                            ]}
-                            placeholder={t("Password")}
+                            style={inputStyle(errors.name, form.name)}
+                            placeholder={t("Full Name")}
                             placeholderTextColor="#aaa"
-                            secureTextEntry={!showPassword}
-                            value={form.password}
-                            onChangeText={(val) => handleChange("password", val)}
+                            value={form.name}
+                            onChangeText={(val) => handleChange("name", val)}
                         />
-                        <TouchableOpacity
-                            onPress={() => setShowPassword((prev) => !prev)}
-                            style={[
-                                styles.eyeIcon,
-                                direction === "rtl" ? { left: 10, right: "auto" } : { right: 10 },
-                            ]}
-                        >
-                            {!showPassword ? (
-                                <Feather name="eye" size={22} color="#6b7280" />
-                            ) : (
-                                <AntDesign name="eye-invisible" size={22} color="#6b7280" />
-                            )}
-                        </TouchableOpacity>
+                        {errors.name ? (
+                            <Text style={styles.errorText}>{errors.name}</Text>
+                        ) : form.name ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
                     </View>
-                    {errors.password ? (
-                        <Text style={styles.errorText}>{errors.password}</Text>
-                    ) : form.password ? (
-                        <Text style={styles.successText}>{t("Looks good!")}</Text>
-                    ) : null}
-                </View>
 
-                {/* Confirm Password */}
-                <View style={styles.inputContainer}>
-                    <View style={styles.inputWrapper}>
+
+                    <View style={styles.inputContainer}>
                         <TextInput
-                            style={[inputStyle(errors.confirmPassword, form.confirmPassword),
+                            style={inputStyle(errors.username, form.username)}
+                            placeholder={t("Username")}
+                            placeholderTextColor="#aaa"
+                            value={form.username}
+                            onChangeText={(val) => handleChange("username", val)}
+                        />
+                        {errors.username ? (
+                            <Text style={styles.errorText}>{errors.username}</Text>
+                        ) : form.username ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
+                    </View>
+
+
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            style={inputStyle(errors.email, form.email)}
+                            placeholder={t("Email")}
+                            placeholderTextColor="#aaa"
+                            value={form.email}
+                            onChangeText={(val) => handleChange("email", val)}
+                        />
+                        {errors.email ? (
+                            <Text style={styles.errorText}>{errors.email}</Text>
+                        ) : form.email ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
+                    </View>
+
+
+                    <View style={styles.inputContainer}>
+                        <View style={styles.inputWrapper}>
+                            <TextInput
+                                style={[
+                                    inputStyle(errors.password, form.password),
+                                    i18n.language === "ar" ? { paddingLeft: 40 } : { paddingRight: 40 }
+                                ]}
+                                placeholder={t("Password")}
+                                placeholderTextColor="#aaa"
+                                secureTextEntry={!showPassword}
+                                value={form.password}
+                                onChangeText={(val) => handleChange("password", val)}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword((prev) => !prev)}
+                                style={[
+                                    styles.eyeIcon,
+                                    direction === "rtl" ? { left: 10, right: "auto" } : { right: 10 },
+                                ]}
+                            >
+                                {!showPassword ? (
+                                    <Feather name="eye" size={22} color="#6b7280" />
+                                ) : (
+                                    <AntDesign name="eye-invisible" size={22} color="#6b7280" />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {errors.password ? (
+                            <Text style={styles.errorText}>{errors.password}</Text>
+                        ) : form.password ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
+                    </View>
+
+                    {/* Confirm Password */}
+                    <View style={styles.inputContainer}>
+                        <View style={styles.inputWrapper}>
+                            <TextInput
+                                style={[inputStyle(errors.confirmPassword, form.confirmPassword),
                                 i18n.language === "ar" ? { paddingLeft: 40 } : { paddingRight: 40 }]}
-                            placeholder={t("Confirm Password")}
-                            placeholderTextColor="#aaa"
-                            secureTextEntry={!showConfirmPassword}
-                            value={form.confirmPassword}
-                            onChangeText={(val) => handleChange("confirmPassword", val)}
-                        />
-                        <TouchableOpacity
-                            onPress={() => setShowConfirmPassword((prev) => !prev)}
-                            style={[
-                                styles.eyeIcon,
-                                direction === "rtl" ? { left: 10, right: "auto" } : { right: 10 },
-                            ]}
-                        >
-                            {!showConfirmPassword ? (
-                                <Feather name="eye" size={22} color="#6b7280" />
-                            ) : (
-                                <AntDesign name="eye-invisible" size={22} color="#6b7280" />
-                            )}
-                        </TouchableOpacity>
+                                placeholder={t("Confirm Password")}
+                                placeholderTextColor="#aaa"
+                                secureTextEntry={!showConfirmPassword}
+                                value={form.confirmPassword}
+                                onChangeText={(val) => handleChange("confirmPassword", val)}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowConfirmPassword((prev) => !prev)}
+                                style={[
+                                    styles.eyeIcon,
+                                    direction === "rtl" ? { left: 10, right: "auto" } : { right: 10 },
+                                ]}
+                            >
+                                {!showConfirmPassword ? (
+                                    <Feather name="eye" size={22} color="#6b7280" />
+                                ) : (
+                                    <AntDesign name="eye-invisible" size={22} color="#6b7280" />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {errors.confirmPassword ? (
+                            <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+                        ) : form.confirmPassword ? (
+                            <Text style={styles.successText}>{t("Passwords match.")}</Text>
+                        ) : null}
                     </View>
-                    {errors.confirmPassword ? (
-                        <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-                    ) : form.confirmPassword ? (
-                        <Text style={styles.successText}>{t("Passwords match.")}</Text>
-                    ) : null}
+
+                    {/* Register Button */}
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>{t("Register")}</Text>
+                    </TouchableOpacity>
+
+                    {/* Login Link */}
+                    <TouchableOpacity onPress={() => navigation.navigate("login")}>
+                        <Text style={styles.registerText}>
+                            {t("Already have an account?")}{" "}
+                            <Text style={styles.registerLink}>{t("Login")}</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-                {/* Register Button */}
-                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>{t("Register")}</Text>
-                </TouchableOpacity>
-
-                {/* Login Link */}
-                <TouchableOpacity onPress={() => navigation.navigate("login")}>
-                    <Text style={styles.registerText}>
-                        {t("Already have an account?")}{" "}
-                        <Text style={styles.registerLink}>{t("Login")}</Text>
-                    </Text>
-                </TouchableOpacity>
             </View>
-        </View>
+            </KeyboardAvoidingView>
     );
 }
 
@@ -255,6 +261,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#f3f4f6",
         padding: 20,
+    },
+    keyboard: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f3f4f6",
     },
     langBtn: {
         alignSelf: "flex-end",
