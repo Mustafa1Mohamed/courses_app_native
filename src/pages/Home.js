@@ -22,7 +22,7 @@ export default function Home() {
     };
 
     const handleLogout = async () => {
-        await AsyncStorage.removeItem("user");
+        await AsyncStorage.removeItem("currentUser");
         navigation.replace("login");
     };
 
