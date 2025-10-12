@@ -269,5 +269,11 @@
     "Back to My Courses":"العودة للدورات الخاصة بي",
     "Pro Basic":"برو أساسي",
     "Please confirm your password":"يرجى تاكيد كلمة المرور",
-    "ChatBot":"الدردشة الذكية"
+    "ChatBot":"الدردشة الذكية",
+    "Language":"اللغة",
+    "Theme":"السمة",
+    "Light":"فاتح",
+    "Dark":"داكن",
+    "Change name or image":"تغيير الاسم أو الصورة"
+    
 }

@@ -12,8 +12,11 @@ import {
   Button,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({
     name: "",
@@ -21,6 +24,11 @@ const Profile = () => {
     username: "",
     image: "",
   });
+  const { t, i18n } = useTranslation();
+  const [direction, setDirection] = useState(i18n.language === "ar" ? "rtl" : "ltr");
+  useEffect(() => {
+    setDirection(i18n.language === "ar" ? "rtl" : "ltr");
+  }, [i18n.language]);
   const [language, setLanguage] = useState("ar");
   const [darkTheme, setDarkTheme] = useState(false);
 
@@ -28,6 +36,15 @@ const Profile = () => {
   const [editName, setEditName] = useState("");
   const [editImage, setEditImage] = useState("");
 
+  const handleLanguageChange = (lang) => {
+    i18n.changeLanguage(lang);
+    setDirection(lang === "ar" ? "rtl" : "ltr");
+    setLanguage(lang);
+  };
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("currentUser");
+    navigation.replace("login");
+  };
   useEffect(() => {
     const load = async () => {
       try {
@@ -55,15 +72,15 @@ const Profile = () => {
     load();
   }, []);
 
-  const toggleLanguage = async () => {
-    const next = language === "ar" ? "en" : "ar";
-    setLanguage(next);
-    try {
-      await AsyncStorage.setItem("app_language", next);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  // const toggleLanguage = async () => {
+  //   const next = language === "ar" ? "en" : "ar";
+  //   setLanguage(next);
+  //   try {
+  //     await AsyncStorage.setItem("app_language", next);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   const toggleTheme = async () => {
     const next = !darkTheme;
@@ -104,8 +121,8 @@ const Profile = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
+    <ScrollView contentContainerStyle={styles.container} direction={direction}>
+      <View style={styles.card} direction={direction}>
         <Image
           source={{ uri: user.image || "../assets/Profile.jpg" }}
           style={styles.avatar}
@@ -115,21 +132,25 @@ const Profile = () => {
 
         <View style={styles.divider} />
 
-        <TouchableOpacity style={styles.listItem} onPress={toggleLanguage}>
-          <Text style={styles.listLabel}>Language</Text>
+        <TouchableOpacity style={styles.listItem} onPress={() => handleLanguageChange(language === "ar" ? "en" : "ar")}>
+          <Text style={styles.listLabel}>{t("Language")}</Text>
           <Text style={styles.listValue}>
-            {language === "ar" ? "Arabic" : "English"}
+            {language === "en" ? "العربية" : "English"}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.listItem} onPress={toggleTheme}>
-          <Text style={styles.listLabel}>Theme</Text>
-          <Text style={styles.listValue}>{darkTheme ? "Dark" : "Light"}</Text>
+          <Text style={styles.listLabel}>{t("Theme")}</Text>
+          <Text style={styles.listValue}>{darkTheme ? t("Dark") : t("Light")}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.listItem} onPress={handleLogout}>
+          <Text style={[styles.listLabel,{textAlign:"center"}]}>{t("Logout")}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.listItem} onPress={openEditor}>
-          <Text style={styles.listLabel}>Edit</Text>
-          <Text style={styles.listValue}>Change name or image</Text>
+          <Text style={styles.listLabel}>{t("Edit")}</Text>
+          <Text style={styles.listValue}>{t("Change name or image")}</Text>
         </TouchableOpacity>
 
         {editing ? (
