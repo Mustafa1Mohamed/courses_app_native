@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { View, Alert, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Alert, StyleSheet, ActivityIndicator, Platform } from "react-native";
 import { WebView } from "react-native-webview";
 import { useDispatch } from "react-redux";
 import { enrollCourse } from "../../Store/EnrolledCoursesSlice";
@@ -10,9 +10,6 @@ export default function PayPalCheckout() {
     const route = useRoute();
     const { course } = route.params || {};
     const dispatch = useDispatch();
-    // const isEnrolled = useSelector((state) =>
-    //     state.EnrolledCoursesReducer.enrolled.find((c) => c.id === course.id)
-    // );
     const handleMessage = (event) => {
         try {
             const data = JSON.parse(event.nativeEvent.data);
@@ -36,21 +33,30 @@ export default function PayPalCheckout() {
 
     return (
         <View style={styles.container}>
-
-            <WebView
-                source={{ uri: "https://mustafa1mohamed.github.io/hostedPage/" }}
-                onMessage={handleMessage}
-                javaScriptEnabled
-                domStorageEnabled
-                startInLoadingState
-                renderLoading={() => (
-                    <ActivityIndicator
-                        size="large"
-                        color="#0070BA"
-                        style={{ flex: 1, alignSelf: "center", }}
-                    />
-                )}
-            />
+            {Platform.OS === 'web' ? <iframe
+                width="100%"
+                height="100%"
+                src="https://mustafa1mohamed.github.io/hostedPage/"
+                title="PayPal Checkout"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                onClick={handleMessage}
+            ></iframe> :
+                <WebView
+                    source={{ uri: "https://mustafa1mohamed.github.io/hostedPage/" }}
+                    onMessage={handleMessage}
+                    javaScriptEnabled
+                    domStorageEnabled
+                    startInLoadingState
+                    renderLoading={() => (
+                        <ActivityIndicator
+                            size="large"
+                            color="#0070BA"
+                            style={{ flex: 1, alignSelf: "center", }}
+                        />
+                    )}
+                />}
         </View>
     );
 }
