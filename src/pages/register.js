@@ -84,10 +84,12 @@ export default function Register() {
         const newUser = {
             name: form.name.trim(),
             username: form.username.trim(),
+            email: form.email.trim(),
             password: form.password,
         };
 
         let users = JSON.parse(await AsyncStorage.getItem("users")) || [];
+
         users.push(newUser);
         await AsyncStorage.setItem("users", JSON.stringify(users));
         await AsyncStorage.setItem("currentUser", JSON.stringify(newUser));
@@ -250,7 +252,7 @@ export default function Register() {
                     </TouchableOpacity>
                 </View>
             </View>
-            </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
 }
 

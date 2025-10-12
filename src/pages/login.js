@@ -83,11 +83,13 @@ export default function Login() {
     const handleSubmit = async () => {
         if (!validate()) return;
 
-        const storedUser = await AsyncStorage.getItem("currentUser");
-        if (storedUser) {
-            const user = JSON.parse(storedUser);
-            if (user.username === username && user.password === password) {
-                if (user.username=== "admin") {
+        const storedUsers = await AsyncStorage.getItem("users");
+        if (storedUsers) {
+            const users = JSON.parse(storedUsers);
+            const user = users.find((u) => u.username === username && u.password === password);
+            if (user) {
+                await AsyncStorage.setItem("currentUser", JSON.stringify(user));
+                if (user.username === "admin") {
                     navigation.navigate("AdminPanel");
                 } else {
                     navigation.navigate("All Courses");
