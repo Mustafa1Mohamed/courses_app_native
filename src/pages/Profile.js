@@ -111,7 +111,7 @@ const Profile = () => {
           style={styles.avatar}
         />
         <Text style={styles.name}>{user.name || "-"}</Text>
-        <Text style={styles.email}>{user.email || user.username || "-"}</Text>
+        <Text style={styles.email}>{user.email || "-"}</Text>
 
         <View style={styles.divider} />
 

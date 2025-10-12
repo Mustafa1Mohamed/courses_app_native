@@ -39,7 +39,7 @@ function CoursesDetails() {
             mode="contained-tonal"
             icon="check"
            onPress={() =>
-              navigation.navigate("All Courses", { screen: "MyCourses" })
+              navigation.navigate("All Courses", { screen: "Mycourses" })
             }
             style={styles.enrolledButton}
           >
