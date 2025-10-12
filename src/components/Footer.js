@@ -1,33 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t, i18n } = useTranslation();
+  const [direction, setDirection] = useState(i18n.language === "ar" ? "rtl" : "ltr");
+  useEffect(() => {
+      const handleLanguageChange = (lang) => {
+        setDirection(lang === "ar" ? "rtl" : "ltr");
+      };
+  
+      i18n.on("languageChanged", handleLanguageChange);
+  
+      return () => {
+        i18n.off("languageChanged", handleLanguageChange);
+      };
+    }, [i18n]);
   return (
-    <View style={styles.footer}>
+    <View style={[styles.footer, { direction }]}>
       {/* Logo & About */}
       <View style={styles.section}>
         <Text style={styles.logo}>
-          <Text>E-Learning</Text>
+          <Text>{t("E-Learning")}</Text>
         </Text>
         <Text style={styles.text}>
-          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-          officia mollit anim id est laborum.
+          {t("The best platform to learn new skills online. Join us and start learning today!")}
         </Text>
-        <Text style={styles.copy}>© 2025 All rights reserved</Text>
+        <Text style={styles.copy}>{t("© 2023 E-Learning. All rights reserved.")}</Text>
       </View>
 
       {/* Contact */}
       <View style={styles.section}>
-        <Text style={styles.heading}>Contact Us</Text>
-        <Text style={styles.text}>Email: info@elearning.com</Text>
-        <Text style={styles.text}>Phone: (+88) 111 555 666</Text>
-        <Text style={styles.text}>Address: 40 Baria Street, New York, USA</Text>
+        <Text style={styles.heading}>{t("Contact Us")}</Text>
+        <Text style={styles.text}>{t("Email")}: info@elearning.com</Text>
+        <Text style={styles.text}>{t("Phone")}: (+88) 111 555 666</Text>
+        <Text style={styles.text}>{t("Address")}: 40 Baria Street, New York, USA</Text>
       </View>
 
       {/* Follow Us Row at Bottom */}
       <View style={styles.followRow}>
-        <Text style={styles.heading}>Follow Us:</Text>
+        <Text style={styles.heading}>{t("Follow Us")}:</Text>
         <View style={styles.socialRow}>
           <TouchableOpacity onPress={() => Linking.openURL("https://facebook.com")}>
             <FontAwesome name="facebook" size={18} color="#4f46e5" />

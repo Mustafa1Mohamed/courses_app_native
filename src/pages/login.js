@@ -1,41 +1,53 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Text,
     TextInput,
     View,
     TouchableOpacity,
     StyleSheet,
-    Pressable,
-    Animated,
+    I18nManager,
+    KeyboardAvoidingView,
+    Platform,
 } from "react-native";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Feather from '@expo/vector-icons/Feather';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { Button } from "react-native-paper";
 
 export default function Login() {
+    const { t, i18n } = useTranslation();
     const navigation = useNavigation();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [direction, setDirection] = useState(i18n.language === "ar" ? "rtl" : "ltr");
 
     const [errors, setErrors] = useState({
         usernameErr: "",
         passwordErr: "",
     });
 
+
+
+    useEffect(() => {
+        const newDir = i18n.language === "ar" ? "rtl" : "ltr";
+        setDirection(newDir);
+    }, [i18n.language]);
+
     const validate = () => {
         let valid = true;
         if (username.length === 0) {
             setErrors((e) => ({
                 ...e,
-                usernameErr: "Username is required",
+                usernameErr: t("Username is required"),
             }));
             valid = false;
         } else if (username.length < 3) {
             setErrors((e) => ({
                 ...e,
-                usernameErr: "Username must be at least 3 characters",
+                usernameErr: t("Username must be at least 3 characters"),
             }));
             valid = false;
         } else {
@@ -46,20 +58,19 @@ export default function Login() {
         if (password.length === 0) {
             setErrors((e) => ({
                 ...e,
-                passwordErr: "Password is required",
+                passwordErr: t("Password is required"),
             }));
             valid = false;
         } else if (password.length < 6) {
             setErrors((e) => ({
                 ...e,
-                passwordErr: "Password must be at least 6 characters",
+                passwordErr: t("Password must be at least 6 characters"),
             }));
             valid = false;
         } else if (!passwordRegex.test(password)) {
             setErrors((e) => ({
                 ...e,
-                passwordErr:
-                    "Password must contain at least one letter and one number",
+                passwordErr: t("Password must contain at least one letter and one number"),
             }));
             valid = false;
         } else {
@@ -72,98 +83,127 @@ export default function Login() {
     const handleSubmit = async () => {
         if (!validate()) return;
 
-        const storedUser = await AsyncStorage.getItem("user");
-        if (storedUser) {
-            const user = JSON.parse(storedUser);
-            if (user.username === username && user.password === password) {
-                navigation.navigate("All Courses");
+        const storedUsers = await AsyncStorage.getItem("users");
+        if (storedUsers) {
+            const users = JSON.parse(storedUsers);
+            const user = users.find((u) => u.username === username && u.password === password);
+            if (user) {
+                await AsyncStorage.setItem("currentUser", JSON.stringify(user));
+                if (user.username === "admin") {
+                    navigation.navigate("AdminPanel");
+                } else {
+                    navigation.navigate("All Courses");
+                }
             } else {
-                alert("Invalid username or password");
+                alert(t("Invalid username or password"));
             }
         } else {
-            alert("No account found. Redirecting to Register...");
+            alert(t("No account found. Redirecting to Register..."));
             navigation.navigate("register");
         }
     };
 
     return (
-        <View style={styles.screen}>
-            <View style={styles.formContainer}>
-                <Text style={styles.title}>Login</Text>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.keyboard}
+        >
+            <View style={[styles.screen, { direction: direction, writingDirection: direction }]}>
+                <Button
+                    style={styles.btn}
+                    mode="contained"
+                    onPress={() => {
+                        const newLang = i18n.language === "en" ? "ar" : "en";
+                        i18n.changeLanguage(newLang);
+                    }}
+                >
+                    {i18n.language === "en" ? "AR" : "EN"}
+                </Button>
 
-                {/* Username */}
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={[
-                            styles.input,
-                            errors.usernameErr
-                                ? styles.inputError
-                                : username
-                                    ? styles.inputSuccess
-                                    : null,
-                        ]}
-                        placeholder="Username"
-                        placeholderTextColor="#aaa"
-                        value={username}
-                        onChangeText={setUsername}
-                    />
-                    {errors.usernameErr ? (
-                        <Text style={styles.errorText}>{errors.usernameErr}</Text>
-                    ) : username ? (
-                        <Text style={styles.successText}>Looks good!</Text>
-                    ) : null}
-                </View>
+                <View style={styles.formContainer}>
+                    <Text style={[styles.title, { textAlign: "center" }]}>
+                        {t("Login")}
+                    </Text>
 
-                {/* Password */}
-                <View style={styles.inputContainer}>
-                    <View style={styles.passwordWrapper}>
+                    {/* Username */}
+                    <View style={styles.inputContainer}>
                         <TextInput
                             style={[
                                 styles.input,
-                                errors.passwordErr
+                                { textAlign: direction === "rtl" ? "right" : "left" },
+                                errors.usernameErr
                                     ? styles.inputError
-                                    : password
+                                    : username
                                         ? styles.inputSuccess
                                         : null,
                             ]}
-                            placeholder="Password"
+                            placeholder={t("Username")}
                             placeholderTextColor="#aaa"
-                            secureTextEntry={!showPassword}
-                            value={password}
-                            onChangeText={setPassword}
+                            value={username}
+                            onChangeText={setUsername}
                         />
-                        <TouchableOpacity
-                            onPress={() => setShowPassword(!showPassword)}
-                            style={styles.eyeButton}
-                        >
-                            <Text style={styles.eyeText}>
-                                {showPassword ? <AntDesign name="eye-invisible" size={24} color="#6b7280" /> : <Feather name="eye" size={24} color="#6b7280" />}
-                            </Text>
-                        </TouchableOpacity>
+                        {errors.usernameErr ? (
+                            <Text style={styles.errorText}>{errors.usernameErr}</Text>
+                        ) : username ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
                     </View>
-                    {errors.passwordErr ? (
-                        <Text style={styles.errorText}>{errors.passwordErr}</Text>
-                    ) : password ? (
-                        <Text style={styles.successText}>Password looks good.</Text>
-                    ) : null}
+
+                    {/* Password */}
+                    <View style={styles.inputContainer}>
+                        <View style={styles.passwordWrapper}>
+                            <TextInput
+                                style={[
+                                    styles.input,
+                                    { textAlign: direction === "rtl" ? "right" : "left" },
+                                    errors.passwordErr
+                                        ? styles.inputError
+                                        : password
+                                            ? styles.inputSuccess
+                                            : null,
+                                ]}
+                                placeholder={t("Password")}
+                                placeholderTextColor="#aaa"
+                                secureTextEntry={!showPassword}
+                                value={password}
+                                onChangeText={setPassword}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                                style={[
+                                    styles.eyeButton,
+                                    direction === "rtl" ? { left: 10, right: "auto" } : { right: 10, left: "auto" },
+                                ]}
+                            >
+                                {showPassword ? (
+                                    <AntDesign name="eye-invisible" size={24} color="#6b7280" />
+                                ) : (
+                                    <Feather name="eye" size={24} color="#6b7280" />
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                        {errors.passwordErr ? (
+                            <Text style={styles.errorText}>{errors.passwordErr}</Text>
+                        ) : password ? (
+                            <Text style={styles.successText}>{t("Looks good!")}</Text>
+                        ) : null}
+                    </View>
+
+                    {/* Login Button */}
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>{t("Login")}</Text>
+                    </TouchableOpacity>
+
+                    {/* Register Link */}
+                    <TouchableOpacity onPress={() => navigation.navigate("register")}>
+                        <Text style={styles.registerText}>
+                            {t("Don't have an account?")}{" "}
+                            <Text style={styles.registerLink}>{t("Register")}</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-                {/* Login Button */}
-                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Login</Text>
-                </TouchableOpacity>
-
-                {/* Register Link */}
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("register")}
-                >
-                    <Text style={styles.registerText}>
-                        Don't have an account?{" "}
-                        <Text style={styles.registerLink}>Register</Text>
-                    </Text>
-                </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -172,8 +212,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f3f4f6", // tailwind gray-100
+        backgroundColor: "#f3f4f6",
         padding: 20,
+    },
+    keyboard: {
+        flex: 1,
     },
     formContainer: {
         backgroundColor: "#fff",
@@ -190,8 +233,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: "bold",
-        color: "#6366f1", // tailwind indigo-500
-        textAlign: "center",
+        color: "#6366f1",
         marginBottom: 24,
     },
     inputContainer: {
@@ -199,19 +241,19 @@ const styles = StyleSheet.create({
     },
     input: {
         borderBottomWidth: 2,
-        borderColor: "#d1d5db", // gray-300
+        borderColor: "#d1d5db",
         borderRadius: 4,
         paddingVertical: 12,
         paddingHorizontal: 10,
         fontSize: 16,
-        color: "#111827", // gray-900
+        color: "#111827",
         backgroundColor: "#fff",
     },
     inputError: {
-        borderColor: "#dc2626", // red-600
+        borderColor: "#dc2626",
     },
     inputSuccess: {
-        borderColor: "#16a34a", // green-600
+        borderColor: "#16a34a",
     },
     errorText: {
         color: "#dc2626",
@@ -228,12 +270,7 @@ const styles = StyleSheet.create({
     },
     eyeButton: {
         position: "absolute",
-        right: 10,
         top: 12,
-    },
-    eyeText: {
-        fontSize: 18,
-        color: "#6b7280", // gray-500
     },
     button: {
         backgroundColor: "#6366f1",
@@ -257,4 +294,11 @@ const styles = StyleSheet.create({
         color: "#6366f1",
         fontWeight: "600",
     },
+    btn: {
+        alignSelf: "flex-end",
+        marginBottom: 20,
+        backgroundColor: "#6366f1",
+        padding: 0,
+        borderRadius: 8,
+    }
 });
