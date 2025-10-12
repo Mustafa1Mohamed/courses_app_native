@@ -16,14 +16,9 @@ export default function Home() {
         setDirection(i18n.language === "ar" ? "rtl" : "ltr");
     }, [i18n.language]);
 
-    const handleLanguageChange = (lang) => {
-        i18n.changeLanguage(lang);
-    };
+    
 
-    const handleLogout = async () => {
-        await AsyncStorage.removeItem("currentUser");
-        navigation.replace("login");
-    };
+   
 
     return (
         <SafeAreaView contentContainerStyle={{ direction: direction }} style={styles.safeArea}>
@@ -36,7 +31,7 @@ export default function Home() {
                 <View style={[styles.container, { direction: direction }]}>
                     <Header />
 
-                    <View
+                    {/* <View
                         style={[
                             styles.topButtons,
                             {
@@ -68,7 +63,7 @@ export default function Home() {
                         >
                             {t("Logout")}
                         </Button>
-                    </View>
+                    </View> */}
 
                     <FeaturedCourses />
                     

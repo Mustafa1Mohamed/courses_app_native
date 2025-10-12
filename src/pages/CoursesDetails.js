@@ -9,7 +9,7 @@ import { enrollCourse } from "../../Store/EnrolledCoursesSlice";
 function CoursesDetails() {
   const route = useRoute();
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { course } = route.params;
 
   const isEnrolled = useSelector((state) =>
@@ -17,7 +17,8 @@ function CoursesDetails() {
   );
 
   const handleEnroll = () => {
-    dispatch(enrollCourse(course));
+    navigation.navigate("checkout", { course });
+    // dispatch(enrollCourse(course));
   };
 
   return (
@@ -25,27 +26,17 @@ function CoursesDetails() {
       <MyCard course={course} showButton={false} />
 
       <View style={styles.btnContainer}>
-        {!isEnrolled ? (
-          <Button
-            mode="contained"
-            icon="book"
-            onPress={handleEnroll}
-            style={styles.enrollButton}
-          >
-            Enroll Now
-          </Button>
-        ) : (
-          <Button
-            mode="contained-tonal"
-            icon="check"
-           onPress={() =>
-              navigation.navigate("All Courses", { screen: "Mycourses" })
-            }
-            style={styles.enrolledButton}
-          >
-            Go to My Courses
-          </Button>
-        )}
+        <Button
+          mode="contained"
+          icon="book"
+          onPress={handleEnroll}
+          style={[
+            isEnrolled ? { backgroundColor: "gray" } : {},
+            { width: "60%" }
+          ]}
+        >
+          {isEnrolled ? "Enrolled" : "Enroll Now"}
+        </Button>
         <Button
           mode="outlined"
           icon="arrow-left"
@@ -68,6 +59,8 @@ const styles = StyleSheet.create({
   btnContainer: {
     marginTop: 20,
     alignItems: "flex-end",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   backButton: {
     width: "30%",

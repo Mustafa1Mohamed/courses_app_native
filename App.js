@@ -25,6 +25,7 @@ import Profile from "./src/pages/Profile";
 
 import store from "./Store/store";
 import i18n from "./i18n";
+import PayPalCheckout from "./src/pages/checkout";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -107,6 +108,7 @@ export default function App() {
                 component={AdminPanel}
                 options={{ headerStatusBarHeight: 30, headerShown: false }}
               />
+              <Stack.Screen name="checkout" component={PayPalCheckout} />
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>
