@@ -1,7 +1,6 @@
 import { View, ScrollView, StyleSheet, SafeAreaView, Platform } from "react-native";
 import Header from "../components/Header";
 import FeaturedCourses from "../components/FeaturedCourses";
-import Footer from "../components/Footer";
 import { Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
@@ -72,7 +71,7 @@ export default function Home() {
                     </View>
 
                     <FeaturedCourses />
-                    <Footer />
+                    
                 </View>
             </ScrollView>
         </SafeAreaView>
